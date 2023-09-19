@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,15 +37,15 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<StockDto> findAll() {
-        List <Stock> stocks = this.stockRepo.findAll();
-        List<StockDto> stockDtos = stocks.stream().map(s->this.entityToDto(s)).collect(Collectors.toList());
+        List<Stock> stocks = this.stockRepo.findAll();
+        List<StockDto> stockDtos = stocks.stream().map(s -> this.entityToDto(s)).collect(Collectors.toList());
         return stockDtos;
     }
 
     @Override
     public void deleteUsingId(Integer id) {
-        Stock stock = stockRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Stock", "Stock Id", id));
-         this.stockRepo.delete(stock);
+        Stock stock = stockRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Stock", "Stock Id", id));
+        this.stockRepo.delete(stock);
 
     }
 
@@ -57,13 +56,12 @@ public class StockServiceImpl implements StockService {
         stock.setName(stockDto.getName());
         stock.setQuantity(stockDto.getQuantity());
         stockRepo.save(stock);
-
-        BeanUtils.copyProperties(stock,stockDto);
+        BeanUtils.copyProperties(stock, stockDto);
 
         return stockDto;
     }
 
-    public StockDto entityToDto(Stock stock){
+    public StockDto entityToDto(Stock stock) {
         StockDto stockDto = new StockDto();
         stockDto.setId(stock.getId());
         stockDto.setName(stock.getName());
