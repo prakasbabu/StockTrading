@@ -6,6 +6,7 @@ import com.prakash.stocktrading.exception.ResourceNotFoundException;
 import com.prakash.stocktrading.repo.StockRepo;
 import com.prakash.stocktrading.service.iface.StockService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,19 @@ import java.util.stream.Collectors;
 public class StockServiceImpl implements StockService {
 
     private final StockRepo stockRepo;
+    private final ModelMapper modelMapper;
 
     @Override
-    public Stock createStock(StockDto stockDto) {
+    public StockDto createStock(StockDto stockDto) {
         Stock stock = new Stock();
         BeanUtils.copyProperties(stockDto, stock);
         this.stockRepo.save(stock);
-        return stock;
+        modelMapper.map(stock,StockDto.class);
+        return stockDto;
     }
 
     @Override
     public StockDto findStock(Integer id) {
-        System.out.println("line one");
         Stock stock = stockRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Stock", "stock Id", id));
         StockDto stockDto = new StockDto();
         BeanUtils.copyProperties(stock, stockDto);

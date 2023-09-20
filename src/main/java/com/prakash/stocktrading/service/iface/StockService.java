@@ -6,7 +6,7 @@ import com.prakash.stocktrading.entity.Stock;
 import java.util.List;
 
 public interface StockService {
-    Stock createStock(StockDto stockDto);
+    StockDto createStock(StockDto stockDto);
     StockDto findStock(Integer id);
 
     List<StockDto> findAll();

@@ -3,12 +3,15 @@ package com.prakash.stocktrading.controller;
 import com.prakash.stocktrading.dto.StockDto;
 import com.prakash.stocktrading.service.iface.StockService;
 import com.prakash.stocktrading.utils.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,9 +19,17 @@ import java.util.List;
 public class StockController {
     private final StockService stockService;
     @PostMapping("/create")
-    public ResponseEntity<StockDto> createStock(@RequestBody StockDto stockDto){
-        this.stockService.createStock(stockDto);
-        return new ResponseEntity<>(stockDto,HttpStatus.CREATED);
+    public ResponseEntity<?> createStock(@Valid @RequestBody StockDto stockDto, BindingResult result){
+
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(this.stockService.createStock(stockDto),HttpStatus.CREATED);
     }
     @GetMapping("/find/{id}")
     public ResponseEntity<StockDto> getStockById(@PathVariable Integer id){
